@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>O&#x02BB;a&#x0304;hu Bill Analysis for Hawaiian Electric | Sovereign Energy</title>
+<meta name="description" content="An AI assistant reads a Hawaiian Electric bill for an O&#x02BB;a&#x0304;hu home. The starting point is 500 kWh a month. Every figure is an estimate you can edit, not a quote.">
+<meta name="theme-color" content="#04060C">
+<link rel="canonical" href="https://sovereignenergy.github.io/sovereign-energy-pages/signal-analysis-hawaii/">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sovereign Energy">
+<meta property="og:title" content="O&#x02BB;a&#x0304;hu Bill Analysis for Hawaiian Electric">
+<meta property="og:description" content="An AI assistant reads a Hawaiian Electric bill for an O&#x02BB;a&#x0304;hu home. The starting point is 500 kWh a month. Every figure is an estimate you can edit, not a quote.">
+<meta property="og:image" content="assets/og.jpg">
+<meta property="og:url" content="https://sovereignenergy.github.io/sovereign-energy-pages/signal-analysis-hawaii/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="O&#x02BB;a&#x0304;hu Bill Analysis for Hawaiian Electric">
+<meta name="twitter:description" content="An AI assistant reads a Hawaiian Electric bill for an O&#x02BB;a&#x0304;hu home. The starting point is 500 kWh a month. Every figure is an estimate you can edit, not a quote.">
+<meta name="twitter:image" content="assets/og.jpg">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/favicon.png">
+<link rel="preload" href="assets/fonts/Inter-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Sovereign Energy","areaServed":"O\u02BBa\u0304hu, Hawaii","description":"AI bill analysis for Hawaiian Electric customers on O\u02BBa\u0304hu. Figures are estimates, not quotes.","sameAs":["https://instagram.com/gosovereignenergy"]}</script>
+</head>
+<body id="top" data-page="signal-analysis-hawaii">
+<a class="skip" href="#lead">Skip to form</a>
+<header class="bar">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Sovereign Energy home"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6 54 18v28L32 58 10 46V18z" fill="none" stroke="#3FE0FF" stroke-width="4"/><path d="M32 18v28M20 32h24" stroke="#FFB347" stroke-width="4" stroke-linecap="round"/></svg><span>SOVEREIGN</span></a>
+    <a class="btn primary" href="#lead"><span class="wide-label">Analyze my bill</span><span class="short-label">Analyze</span></a>
+  </div>
+</header>
+<main>
+<section class="hero" aria-labelledby="h1">
+  <canvas class="stars" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div>
+      <p class="ai-flag">AI assistant · estimates, not quotes</p>
+      <p class="greeting">Aloha.</p>
+      <p class="eyebrow">Signal analysis · Hawaiian Electric</p>
+      <h1 id="h1">Let's read <span class="glow">your bill.</span></h1>
+      <p class="lede">This AI assistant walks through a Hawaiian Electric bill for an O&#x02BB;a&#x0304;hu home. Begin with a typical 500 kWh a month, edit either figure, and request a line-by-line reading. Every number on this page is an estimate, not a quote.</p>
+      <a class="btn primary" href="#lead">Analyze my bill</a>
+      <div style="margin-top:24px">
+        <ul class="trust" aria-label="About this consultation">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/></svg>Serving O&#x02BB;a&#x0304;hu · Hawaiian Electric</li>
+          <li class="license-pending"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8.3-8 9-4.5-.7-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>Hawaii contractor license # [PENDING – Binh to confirm]</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3 3 6-6 5 5"/><path d="M3 12V7m18 7v-3"/></svg>No-pressure consultation</li>
+        </ul>
+      </div>
+    </div>
+    <figure class="panel chart" id="estimate" style="margin:0">
+      <p class="hud">O&#x02BB;a&#x0304;hu · 21.3°N</p>
+      <div class="chart-top">
+        <div>
+          <div class="y">Typical use · estimate</div>
+          <div class="num glow" id="kwh-readout">500</div>
+          <div class="y">kWh / month</div>
+        </div>
+        <div class="est-box">
+          <div class="y" id="dollar-label">Energy charge · estimate</div>
+          <div class="num amber" id="dollar-readout" aria-live="polite">—</div>
+          <p class="fine" id="est-note">Enter the ¢/kWh printed on your bill to see an energy-charge estimate. Not a quote.</p>
+        </div>
+      </div>
+      <svg viewBox="0 0 400 180" role="img" aria-label="Usage signal for an editable estimate. The starting point is 500 kilowatt-hours per month.">
+        <defs>
+          <linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#3FE0FF"/><stop offset="1" stop-color="#FFB347"/></linearGradient>
+          <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3FE0FF" stop-opacity=".25"/><stop offset="1" stop-color="#3FE0FF" stop-opacity="0"/></linearGradient>
+        </defs>
+        <g stroke="rgba(159,179,204,.15)"><path d="M0 45h400M0 90h400M0 135h400"/></g>
+        <path id="usage-fill" d="M10 158 C120 152 220 134.7 300 132.7 S370 120.7 390 114.7 V180 H10 Z" fill="url(#fill)"/>
+        <path id="usage-line" class="line" d="M10 158 C120 152 220 134.7 300 132.7 S370 120.7 390 114.7" fill="none" stroke="url(#lg)" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="10" cy="158" r="6" fill="#3FE0FF"/>
+        <circle id="usage-dot" cx="390" cy="114.7" r="7" fill="#FFB347"/>
+      </svg>
+      <div class="calc">
+        <label for="kwh-input">Monthly use (kWh) <span class="opt">estimate, editable</span>
+          <input id="kwh-input" type="number" inputmode="numeric" min="1" max="9999" step="1" value="500">
+        </label>
+        <label for="rate-input">Energy rate (¢/kWh) <span class="opt">from your bill · estimate</span>
+          <input id="rate-input" type="number" inputmode="decimal" min="0" max="500" step="0.01" placeholder="From your bill">
+        </label>
+      </div>
+      <figcaption class="sources">Starting point: 500 kWh per month, which you can edit. The line is a usage signal for that estimate. It is not a price history and not a Hawaiian Electric tariff.</figcaption>
+    </figure>
+  </div>
+  <svg class="ridge" viewBox="0 0 1440 180" preserveAspectRatio="none" aria-hidden="true">
+    <path fill="#07111f" d="M0 128 L90 118 L160 124 L240 86 L320 108 L410 64 L500 98 L590 46 L680 88 L760 62 L860 104 L960 72 L1060 112 L1160 78 L1260 102 L1350 70 L1440 92 V180 H0 Z"/>
+    <path class="ridgeline" fill="none" stroke="#3FE0FF" stroke-width="2" d="M0 128 L90 118 L160 124 L240 86 L320 108 L410 64 L500 98 L590 46 L680 88 L760 62 L860 104 L960 72 L1060 112 L1160 78 L1260 102 L1350 70 L1440 92"/>
+    <path class="horizon" fill="none" stroke="#FFB347" stroke-width="2" d="M0 148 H1440"/>
+  </svg>
+</section>
+<section>
+  <div class="wrap">
+    <h2>What the analysis decodes</h2>
+    <div class="grid3">
+      <div class="mod reveal"><span class="scan" aria-hidden="true"></span><span class="k">SIGNAL 01</span><h3>Charge breakdown</h3><p>Every line item explained, including which charges move with how the household uses power.</p></div>
+      <div class="mod reveal"><span class="scan" aria-hidden="true"></span><span class="k">SIGNAL 02</span><h3>Plan fit</h3><p>How the plan printed on your Hawaiian Electric bill lines up with when the household uses power.</p></div>
+      <div class="mod reveal"><span class="scan" aria-hidden="true"></span><span class="k">SIGNAL 03</span><h3>What comes next</h3><p>A plain-language reading of the bill. A solar and battery outlook is included when it fits the home. An outlook is an estimate.</p></div>
+    </div>
+  </div>
+</section>
+<section style="padding-top:0">
+  <div class="wrap formwrap">
+    <div id="lead" class="panel formcard">
+      <form data-lead data-kind="bill_analysis" data-page="signal-analysis-hawaii" aria-labelledby="ft">
+        <p class="ai-flag">The assistant is an AI</p>
+        <h2 id="ft">Request your bill analysis</h2>
+        <p class="fine" style="margin:0 0 18px">Upload a recent Hawaiian Electric bill for a closer reading. Figures on this page, and any reading we send, are estimates, not quotes.</p>
+        <div class="field"><label for="name">Full name</label><input id="name" name="name" type="text" required placeholder="First and last name" autocomplete="name" aria-describedby="name_e"><p class="err" id="name_e" aria-live="polite"></p></div>
+        <div class="row two">
+          <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required data-type="email" inputmode="email" placeholder="you@example.com" autocomplete="email" aria-describedby="email_e"><p class="err" id="email_e" aria-live="polite"></p></div>
+          <div class="field"><label for="phone">Mobile phone</label><input id="phone" name="phone" type="tel" required data-type="tel" inputmode="tel" placeholder="(555) 555-5555" autocomplete="tel-national" aria-describedby="phone_e"><p class="err" id="phone_e" aria-live="polite"></p></div>
+        </div>
+        <div class="row two">
+          <div class="field"><label for="zip">O&#x02BB;a&#x0304;hu ZIP code</label><input id="zip" name="zip" type="text" required data-type="zip" inputmode="numeric" maxlength="10" placeholder="968xx" autocomplete="postal-code" aria-describedby="zip_e"><p class="err" id="zip_e" aria-live="polite"></p></div>
+          <div class="field"><label for="utility">Your utility</label><select id="utility" name="utility" required aria-describedby="utility_e"><option value="Hawaiian Electric" selected>Hawaiian Electric</option><option value="Other">Other</option></select><p class="err" id="utility_e" aria-live="polite"></p></div>
+        </div>
+        <div class="field">
+          <span id="up_l" style="font-size:14px;font-weight:600">Upload a recent Hawaiian Electric bill <span class="opt">(optional, PDF or photo, max 8 MB)</span></span>
+          <label class="file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m-5 5 5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg><span data-file-name data-empty="Tap to choose a file">Tap to choose a file</span><input type="file" name="bill_upload" id="bill_upload" data-type="file" accept=".pdf,image/*" aria-labelledby="up_l"></label>
+          <p class="err" aria-live="polite"></p>
+        </div>
+        <div class="field"><label for="average_bill">Your average monthly bill <span class="opt">(optional, your own estimate)</span></label><select id="average_bill" name="average_bill" aria-describedby="average_bill_e"><option value="">Select…</option><option value="Under $100">Under $100</option><option value="$100–$200">$100–$200</option><option value="$200–$300">$200–$300</option><option value="$300–$400">$300–$400</option><option value="$400+">$400+</option><option value="Not sure">Not sure</option></select><p class="err" id="average_bill_e" aria-live="polite"></p></div>
+        <p class="use-echo" id="form-kwh-echo">This request includes 500 kWh / month · estimate. <a href="#estimate">Edit the estimate</a></p>
+        <input type="hidden" name="monthly_kwh" id="monthly_kwh" value="500">
+        <input type="hidden" name="rate_cents_estimate" id="rate_cents_estimate" value="">
+        <input type="hidden" name="market" id="market" value="HI-Oahu">
+        <input type="hidden" name="campaign" id="campaign" value="hawaii-nov">
+        <input type="hidden" name="keyword" id="keyword" value="ALOHA">
+        <div class="hp" aria-hidden="true"><label for="company_website">Leave this empty</label><input id="company_website" name="company_website" type="text" tabindex="-1" autocomplete="off"></div>
+        <div class="consent"><input type="checkbox" id="c_tcpa" name="consent_tcpa" value="yes" required data-msg="Please check the box to agree to be contacted.">
+          <label for="c_tcpa" class="consent-text">By checking this box, I agree that Sovereign Energy and its representatives may contact me at the number and email provided, including by calls and texts that use automated technology, AI-generated or prerecorded voices, about solar and energy services. Consent is not a condition of purchase. Message and data rates may apply. Message frequency varies. Reply STOP to opt out. See our <a href="../privacy/">Privacy Policy</a> and <a href="../terms/">Terms</a>.</label>
+          <p class="err" aria-live="polite"></p>
+        </div>
+        <div class="consent"><input type="checkbox" id="c_mkt" name="consent_marketing_email" value="yes"><label for="c_mkt">Also send me occasional Sovereign Energy emails with energy tips and updates (optional, unsubscribe anytime).</label></div>
+        <button class="btn primary full" type="submit">Analyze my bill</button>
+        <p class="status" data-status role="status" aria-live="polite"></p>
+      </form>
+      <div class="thanks" data-thanks hidden role="status">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17l9-10"/></svg>
+        <h3>Analysis initiated.</h3>
+        <p>We've received your request. A person on our team will follow up with the reading. The assistant that helps prepare it is an AI, and the figures are estimates, not quotes.</p>
+        <p class="fine">Follow along on Instagram: <a href="https://instagram.com/gosovereignenergy" rel="noopener">@gosovereignenergy</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <div class="cols">
+      <div><strong>Sovereign Energy</strong><br>O&#x02BB;a&#x0304;hu · Hawaiian Electric<br>Instagram <a href="https://instagram.com/gosovereignenergy" rel="noopener">@gosovereignenergy</a></div>
+      <nav aria-label="Legal"><a href="../privacy/">Privacy Policy</a><a href="../terms/">Terms</a></nav>
+    </div>
+    <p class="sources" style="margin-top:14px">500 kWh/month is a typical starting point for this page, and you can change it. It is not a published Hawaiian Electric rate. If you enter a ¢/kWh figure, the dollar amount is an energy-charge estimate from your inputs only. It leaves out fixed charges, riders, and taxes. It is not a quote.</p>
+    <p class="license-pending">Hawaii contractor license # [PENDING – Binh to confirm]</p>
+    <p style="margin-top:18px;opacity:.75">© 2026 Sovereign Energy. The bill assistant is an AI. All figures are estimates, not quotes. Whether solar or a battery fits depends on the home, usage, and the plan printed on the bill.</p>
+  </div>
+</footer>
+<script src="../config.js"></script>
+<script>window.LP_CONFIG=Object.assign({},window.LP_CONFIG,{PAGE:"signal-analysis-hawaii"});</script>
+<script src="assets/form.js" defer></script>
+<script src="assets/fx.js" defer></script>
+<script src="assets/estimate.js" defer></script>
+</body>
+</html>
