@@ -107,6 +107,7 @@
           headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload)
         });
         if (res.type !== "opaque" && !res.ok) throw new Error("HTTP " + res.status);
+        try { if (window.fbq) fbq("track", "Lead"); } catch (x) {}
         thanks();
       } catch (err) {
         console.error(err);
