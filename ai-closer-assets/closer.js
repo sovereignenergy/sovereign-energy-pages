@@ -10,13 +10,13 @@ async function askLLM(context){ return null; }
 // ------------------------------------------------------------------------
 var history=[];
 // ---- INTEGRATION STUBS (preview/demo: all return mock data, nothing real happens) ----
-// TODO(Sunrun): replace with the real design tool (roof imagery, shade analysis, production model).
+// TODO(partner integration): replace with the real design tool (roof imagery, shade analysis, production model).
 async function designApi(input){ var k=input.kwh?Math.max(2,Math.round(input.kwh*12/1500*10)/10):null; return {mock:true,system_kw:k,panels:k?Math.ceil(k/0.4):null,annual_kwh:input.kwh?input.kwh*12:null}; }
-// TODO(Sunrun): replace with real pricing/proposal tool. Never show real prices until wired + approved.
+// TODO(partner integration): replace with real pricing/proposal tool. Never show real prices until wired + approved.
 async function pricingApi(design){ return {mock:true,options:[{k:"Lease",d:"Company owns the system; fixed monthly payment to use it.",p:"SAMPLE $XXX/mo"},{k:"PPA",d:"Company owns the system; you pay per kWh it produces.",p:"SAMPLE $0.XX/kWh"},{k:"Loan",d:"You own the system; repay a lender over time.",p:"SAMPLE $XXX/mo"},{k:"Cash",d:"You own the system; pay upfront.",p:"SAMPLE $XX,XXX"}]}; }
-// TODO(Sunrun): replace with real soft-credit flow run by the licensed provider. This page never collects SSN or credit data.
+// TODO(partner integration): replace with real soft-credit flow run by the licensed provider. This page never collects SSN or credit data.
 async function creditCheckApi(consent){ return {mock:true,status:"demo_not_run"}; }
-// TODO(Sunrun): replace with real e-sign envelope (disclosures, CA Solar Energy System Disclosure Document, right-to-cancel). No real contract is generated here.
+// TODO(partner integration): replace with real e-sign envelope (disclosures, CA Solar Energy System Disclosure Document, right-to-cancel). No real contract is generated here.
 async function esignApi(packet){ return {mock:true,status:"demo_not_sent"}; }
 // ------------------------------------------------------------------------
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
