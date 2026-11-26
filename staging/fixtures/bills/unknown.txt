@@ -1,0 +1,4 @@
+City Water Department
+Account Number: 000111
+Amount Due: $40.00
+Gallons used: 2400

@@ -1,0 +1,22 @@
+Hawaiian Electric
+
+Account Number: 345678901234
+Meter Number: H8812345
+Service Address: 1600 ALOHA ST, HONOLULU, HI 96816
+Rate Schedule: R
+Amount Due: $214.77
+kWh Usage: 615
+
+Monthly kWh History
+2024-03  500
+2024-04  520
+2024-05  540
+2024-06  590
+2024-07  640
+2024-08  670
+2024-09  650
+2024-10  600
+2024-11  560
+2024-12  540
+2025-01  530
+2025-02  615

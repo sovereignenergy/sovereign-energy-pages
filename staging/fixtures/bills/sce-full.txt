@@ -1,0 +1,23 @@
+Southern California Edison
+
+Service Account: 3-000-8841-22
+Meter Number: 35912345
+Service Address: 900 HIDDEN LN, IRVINE, CA 92618
+Rate: TOU-D-4-9PM
+Amount Due $276.09
+
+Total kWh this period: 552
+
+12-Month Usage (kWh)
+Jan 410
+Feb 430
+Mar 440
+Apr 460
+May 500
+Jun 620
+Jul 780
+Aug 810
+Sep 760
+Oct 640
+Nov 520
+Dec 552
