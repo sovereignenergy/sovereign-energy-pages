@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Helios, AI closer | Sovereign Energy</title>
+<meta name="description" content="Helios is an AI assistant that walks California homeowners through a solar conversation. Binh Phan approves anything final.">
+<meta name="theme-color" content="#04060C">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../ai-closer-assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script>if(matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("rm");</script>
+</head>
+<body class="booting">
+<canvas id="starfield" aria-hidden="true"></canvas>
+<div id="spot" aria-hidden="true"></div>
+<div class="hud" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i><span class="hud-readout" id="hudReadout">HELIOS · AI · CA</span></div>
+<div class="boot" id="boot">
+  <div class="boot-card">
+    <div class="boot-core" aria-hidden="true"></div>
+    <p class="boot-kicker">Sovereign Energy</p>
+    <h2 class="boot-title">HELIOS</h2>
+    <ol id="bootLog"></ol>
+    <div class="boot-bar" aria-hidden="true"><i id="bootBar"></i></div>
+    <button class="btn" id="bootSkip" type="button">Skip intro</button>
+  </div>
+</div>
+<a class="sr" href="#bay">Skip to the conversation</a>
+<header class="bar">
+  <a class="logo" href="./" aria-label="Sovereign Energy">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6 54 18v28L32 58 10 46V18z" fill="none" stroke="#3FE0FF" stroke-width="4"/><path d="M32 18v28M20 32h24" stroke="#FFB347" stroke-width="4" stroke-linecap="round"/></svg>
+    <span>SOVEREIGN</span>
+  </a>
+  <div class="bar-actions">
+    <button class="voice-toggle" id="voiceToggle" type="button" aria-pressed="false" aria-label="Turn voice on"><span class="vt-ico" aria-hidden="true"></span><span class="vt-label">Voice off</span></button>
+    <span class="tag">AI CLOSER</span>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero-copy reveal">
+        <p class="eyebrow">California · PG&amp;E · SCE · SDG&amp;E</p>
+        <h1>The whole close, with a <span class="glow">holographic advisor.</span></h1>
+        <p class="lede">Helios is an AI assistant working with Binh Phan. It stays with you from the first question through the paperwork. A final proposal, a credit application, and a contract wait until Binh approves them.</p>
+        <ul class="points">
+          <li>An AI runs the conversation. It says so.</li>
+          <li>Designs and prices are estimates until a real proposal exists.</li>
+          <li>Binh, the registered salesperson, seals anything binding.</li>
+        </ul>
+        <p class="aiflag" data-avatar-ai>Halo is an AI projection, not a person.</p>
+        <div class="hero-actions">
+          <button class="btn" id="begin" type="button">Talk with Helios</button>
+          <a class="btn ghost" href="#sequence">See the sequence</a>
+        </div>
+      </div>
+      <div class="av-frame reveal" aria-hidden="false">
+        <div class="av-core">
+          <canvas data-avatar width="480" height="480" aria-label="Halo, holographic AI avatar. An AI projection, not a person." role="img"></canvas>
+          <div class="avatar-switch" role="group" aria-label="Choose an AI avatar">
+            <button class="av-pick" type="button" data-avatar-pick="halo" aria-pressed="true">Halo</button>
+            <button class="av-pick" type="button" data-avatar-pick="aether" aria-pressed="false">Aether</button>
+            <button class="av-pick" type="button" data-avatar-pick="commander" aria-pressed="false">Commander</button>
+          </div>
+          <div class="av-name" data-avatar-name>HALO</div>
+          <div class="av-sub" data-avatar-blurb>Scanline hologram · AI projection</div>
+          <p class="av-license" data-brand-license>CSLB #139345</p>
+          <div class="av-state" data-av-state>Standing by</div>
+        </div>
+      </div>
+    </section>
+    <section class="section" id="sequence">
+      <p class="eyebrow reveal">The sequence</p>
+      <h2 class="reveal">Ten beats. One conversation.</h2>
+      <div class="film">
+        <article class="panel reveal"><b>01 · DISCLOSE</b><p>Helios says it is an AI working with Binh.</p></article>
+        <article class="panel reveal"><b>02 · WARM-UP</b><p>What you want, in your words. Bad claims get corrected.</p></article>
+        <article class="panel reveal"><b>03 · PREDICT</b><p>A contract price for solar power, with the yearly increase written down.</p></article>
+        <article class="panel reveal"><b>04 · EXPECT</b><p>You hear the binding steps before anyone asks for them.</p></article>
+        <article class="panel reveal"><b>05 · HISTORY</b><p>Rate history only when it can be cited. No forecast dressed up as fact.</p></article>
+        <article class="panel reveal"><b>06 · BILL</b><p>Your numbers, in plain language. Gaps stay marked Not visible.</p></article>
+        <article class="panel reveal"><b>07 · DESIGN</b><p>A preliminary illustration. It can change after a site survey.</p></article>
+        <article class="panel reveal"><b>08 · OPTIONS</b><p>Lease, power purchase, loan, and cash, side by side.</p></article>
+        <article class="panel reveal"><b>09 · TERMS</b><p>Warranties only as the approved agreement writes them.</p></article>
+        <article class="panel reveal"><b>10 · SEAL</b><p>Binh approves the offer, credit step, and contract before they go out.</p></article>
+      </div>
+    </section>
+    <section class="section">
+      <div class="split">
+        <article class="panel reveal">
+          <p class="eyebrow">Estimates</p>
+          <h2>Numbers stay labeled.</h2>
+          <p class="lede">Helios can illustrate a system from the kWh you provide. It will not invent a price, a savings percentage, or a leftover utility bill. You keep a utility account.</p>
+        </article>
+        <article class="panel reveal">
+          <p class="eyebrow">The seal</p>
+          <h2>Binh reviews the packet.</h2>
+          <p>The AI prepares the file. These four steps stay closed until he approves them. You keep talking to Helios the whole time.</p>
+          <div class="gates">
+            <div><strong>Proposal</strong>Presented as an offer only after approval.</div>
+            <div><strong>Credit</strong>You enter sensitive details on a secure form, never in chat.</div>
+            <div><strong>Contract</strong>Signature packet only after disclosures.</div>
+            <div><strong>Submission</strong>Provider tools, through Binh or a sanctioned link.</div>
+          </div>
+        </article>
+      </div>
+    </section>
+    <section class="section">
+      <p class="eyebrow reveal">Financing</p>
+      <h2 class="reveal">Four structures. No favorite.</h2>
+      <div class="cards">
+        <article class="panel reveal"><h3>PPA</h3><p>The company owns the system. You pay per kWh the system produces.</p></article>
+        <article class="panel reveal"><h3>Lease</h3><p>The company owns the system. You pay to use it, on the contract's terms.</p></article>
+        <article class="panel reveal"><h3>Loan</h3><p>You own the system and repay a lender over time.</p></article>
+        <article class="panel reveal"><h3>Cash</h3><p>You own the system and pay the purchase price.</p></article>
+      </div>
+      <p class="fine reveal">Any yearly increase is the one written in a contract. This page does not quote a price.</p>
+    </section>
+    <section class="section reveal">
+      <p class="eyebrow">Coverage</p>
+      <h2>California utilities only.</h2>
+      <div class="util-row">
+        <span class="pill">PG&amp;E</span>
+        <span class="pill">SCE</span>
+        <span class="pill">SDG&amp;E</span>
+      </div>
+      <p class="lede">Other utilities, including Hawaii, stay with Binh in this same chat. Helios will not pretend to price them.</p>
+    </section>
+    <section class="bay" id="bay">
+      <div class="bay-grid">
+        <aside class="bay-aside panel">
+          <canvas data-avatar width="420" height="420" aria-label="Halo, holographic AI avatar. An AI projection, not a person." role="img"></canvas>
+          <div class="avatar-switch" role="group" aria-label="Choose an AI avatar">
+            <button class="av-pick" type="button" data-avatar-pick="halo" aria-pressed="true">Halo</button>
+            <button class="av-pick" type="button" data-avatar-pick="aether" aria-pressed="false">Aether</button>
+            <button class="av-pick" type="button" data-avatar-pick="commander" aria-pressed="false">Commander</button>
+          </div>
+          <div class="av-name" data-avatar-name>HALO</div>
+          <div class="av-sub" data-avatar-blurb>Scanline hologram · AI projection</div>
+          <p class="av-license" data-brand-license>CSLB #139345</p>
+          <div class="av-state" data-av-state>Standing by</div>
+          <button class="textbtn" id="askBinh" type="button">Ask Binh to join</button>
+          <button class="textbtn" id="startOver" type="button">Start over</button>
+        </aside>
+        <section class="panel console" aria-label="Conversation with Helios">
+          <div class="console-bar">
+            <span data-console-title>HELIOS · HALO · AI</span>
+            <span class="fine" id="voiceMeta">Voice provider: Browser voice · muted</span>
+          </div>
+          <div class="chat" id="chat" tabindex="0">
+            <div class="msg bot"><span class="who">HELIOS · AI</span>I'm here when you are. I'm an AI assistant, not a person. Voice replies stay off until you use the toggle.</div>
+          </div>
+          <div id="dock">
+            <button class="btn full" id="beginDock" type="button">Begin the conversation</button>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <p><strong>Sovereign Energy</strong> · 7310 Miramar Rd, San Diego, CA 92126 · Licensed &amp; insured, CSLB #139345</p>
+    <nav aria-label="Legal"><a href="../privacy/">Privacy Policy</a><a href="../terms/">Terms</a><a href="review/">Advisor review</a></nav>
+    <p>Helios is an AI assistant, not a person. It gives general information and preliminary estimates, and it does not sign contracts. Binh Phan, the registered salesperson, approves any final proposal, credit application, or contract before it is sent. Results vary by home, usage, and rate plan. We don't guarantee savings. © 2026 Sovereign Energy.</p>
+  </div>
+</footer>
+<div id="live" class="sr" aria-live="polite"></div>
+<script src="../config.js"></script>
+<script src="../ai-closer-assets/common.js"></script>
+<script src="assets/brand.js"></script>
+<script src="assets/config.js"></script>
+<script src="assets/queue.js"></script>
+<script src="assets/voice.js"></script>
+<script src="assets/avatars.js"></script>
+<script src="assets/fx.js"></script>
+<script src="assets/closer.js"></script>
+<script>
+CloserAvatars.bindSwitcher();
+HeliosFX.start();
+HeliosVoice.bind(document.getElementById("voiceToggle"), document.getElementById("voiceMeta"));
+HeliosCloser.bind();
+HeliosFX.boot(function(){});
+</script>
+</body>
+</html>
