@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Sovereign closer staging</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; font: 15px/1.45 ui-sans-serif, system-ui, sans-serif; background: #071018; color: #e7eef8; }
+    main { max-width: 880px; margin: 0 auto; padding: 28px 18px 64px; }
+    h1 { font-size: 1.4rem; margin-bottom: 0.2rem; }
+    .banner { background: #3a2a08; color: #ffd27a; padding: 10px 12px; border-radius: 8px; }
+    label { display: block; margin: 14px 0 6px; color: #9fb0c8; }
+    textarea, input, button { font: inherit; }
+    textarea, input { width: 100%; box-sizing: border-box; background: #0e1a28; color: inherit; border: 1px solid #27405c; border-radius: 8px; padding: 8px; }
+    textarea { min-height: 180px; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    button { background: #14506a; color: white; border: 0; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+    pre { white-space: pre-wrap; background: #0b141f; border-radius: 8px; padding: 12px; overflow: auto; }
+    .say { background: #102033; border-left: 3px solid #3fe0ff; padding: 10px 12px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+<main>
+  <p class="banner">Staging only. Preliminary and non-binding. No credit check runs and no documents are sent. Not a customer offer.</p>
+  <h1>Eric staging console</h1>
+  <p id="gate">Checking host…</p>
+  <div id="app" hidden>
+    <label for="bill">Bill text</label>
+    <textarea id="bill" spellcheck="false"></textarea>
+    <div class="row">
+      <button type="button" id="parse">Parse bill</button>
+      <button type="button" id="size">Preliminary size</button>
+      <button type="button" id="price">Payment types</button>
+    </div>
+    <label for="msg">Message to Eric</label>
+    <input id="msg" value="What can you tell me about this bill?">
+    <div class="row"><button type="button" id="ask">Ask Eric</button></div>
+    <h2>Eric</h2>
+    <div class="say" id="say">No turn yet.</div>
+    <h2>Last response</h2>
+    <pre id="out">{}</pre>
+  </div>
+</main>
+<script>
+(function () {
+  var host = location.hostname;
+  var local = host === "localhost" || host === "127.0.0.1" || host === "[::1]";
+  var gate = document.getElementById("gate");
+  if (!local) {
+    gate.textContent = "This page only runs on the local staging server. It is not a customer-facing offer.";
+    return;
+  }
+  gate.hidden = true;
+  document.getElementById("app").hidden = false;
+  var lastBill = null;
+  var lastDesign = null;
+  function show(value) { document.getElementById("out").textContent = JSON.stringify(value, null, 2); }
+  async function post(path, body) {
+    var response = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    var json = await response.json();
+    show(json);
+    return json;
+  }
+  document.getElementById("parse").onclick = async function () {
+    var json = await post("/api/parse-bill", { text: document.getElementById("bill").value });
+    lastBill = json.bill || null;
+  };
+  document.getElementById("size").onclick = async function () {
+    var bill = lastBill || {};
+    lastDesign = await post("/api/design", {
+      utility: bill.utility_provider,
+      monthly_kwh: bill.monthly_kwh,
+      annual_kwh: bill.annual_kwh,
+      kwh: bill.current_period_kwh,
+      shade: "Mostly sun",
+      battery_interest: "Maybe"
+    });
+  };
+  document.getElementById("price").onclick = async function () {
+    await post("/api/pricing", { design: lastDesign || {} });
+  };
+  document.getElementById("ask").onclick = async function () {
+    var json = await post("/api/closer/chat", {
+      state: "analyze",
+      display_name: "Eric",
+      userText: document.getElementById("msg").value,
+      answers: { parsed_bill: lastBill, utility: lastBill && lastBill.utility_provider }
+    });
+    document.getElementById("say").textContent = json.say || "";
+  };
+})();
+</script>
+</body>
+</html>

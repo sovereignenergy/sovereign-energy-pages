@@ -1,24 +1,81 @@
-/* AI energy analyst: scripted client-side state machine (preliminary). No live AI yet: see askLLM(). */
+/* AI energy analyst: scripted client-side state machine.
+   Staging is opt-in. With no CLOSER.apiBase and no LP_CONFIG.CLOSER_API_BASE,
+   askLLM stays null and design, pricing, credit, and e-sign stay local demos. */
 (function(){"use strict";
 var S=window.SE,AV=window.AV,cfg=window.CLOSER||{};var NAME=cfg.name||"Aether";
 var chat=document.getElementById("chat"),dock=document.getElementById("dock");
 var st=S.get(),lead=st.lead||{},A={};// answers
-// ---- LLM PLUG-IN POINT -------------------------------------------------
-// Later: POST {state, answers, history, userText} to a server proxy (never put an API key in this page),
-// return {say:"...", next:"stateName"} or null. Returning null keeps the scripted path below.
-async function askLLM(context){ return null; }
-// ------------------------------------------------------------------------
+function closerCfg(){return window.CLOSER||cfg||{};}
+function stagingBase(){
+  var live=closerCfg();
+  var b=live.apiBase||(window.LP_CONFIG&&window.LP_CONFIG.CLOSER_API_BASE)||"";
+  return String(b||"").trim().replace(/\/$/,"");
+}
+async function stagingPost(path,body){
+  var base=stagingBase();
+  if(!base)return null;
+  var r=await fetch(base+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  if(!r.ok)throw new Error("staging HTTP "+r.status);
+  return r.json();
+}
+function closerPayload(context){
+  var src=(context&&context.answers)||{},answers={};
+  Object.keys(src).forEach(function(k){
+    if(k==="bill_file_obj")return;
+    var v=src[k];
+    if(v&&typeof v==="object"&&typeof v.base64==="string")return;
+    answers[k]=v;
+  });
+  return {state:(context&&context.state)||"",answers:answers,history:(context&&context.history)||[],userText:(context&&context.userText)||"",routing:!!(context&&context.routing),display_name:closerCfg().name||"Eric",persona:"Eric"};
+}
+// Staging POST /api/closer/chat. No base URL keeps the scripted path and makes no request.
+async function askLLM(context){
+  if(!stagingBase())return null;
+  var routeOnly=context&&context.routing&&!closerCfg().allowLlmRouting&&!closerCfg().speakOnRoute;
+  if(routeOnly)return null;
+  try{
+    var data=await stagingPost("/api/closer/chat",closerPayload(context||{}));
+    if(!data||data.say==null||data.say==="")return null;
+    if(!closerCfg().allowLlmRouting)return {say:data.say};
+    return {say:data.say,next:data.next||undefined};
+  }catch(e){console.warn("[closer staging] askLLM",e);return null;}
+}
 var history=[];
-// ---- INTEGRATION STUBS (preview/demo: all return mock data, nothing real happens) ----
-// TODO(Sunrun): replace with the real design tool (roof imagery, shade analysis, production model).
-async function designApi(input){ var k=input.kwh?Math.max(2,Math.round(input.kwh*12/1500*10)/10):null; return {mock:true,system_kw:k,panels:k?Math.ceil(k/0.4):null,annual_kwh:input.kwh?input.kwh*12:null}; }
-// TODO(Sunrun): replace with real pricing/proposal tool. Never show real prices until wired + approved.
-async function pricingApi(design){ return {mock:true,options:[{k:"Lease",d:"Company owns the system; fixed monthly payment to use it.",p:"SAMPLE $XXX/mo"},{k:"PPA",d:"Company owns the system; you pay per kWh it produces.",p:"SAMPLE $0.XX/kWh"},{k:"Loan",d:"You own the system; repay a lender over time.",p:"SAMPLE $XXX/mo"},{k:"Cash",d:"You own the system; pay upfront.",p:"SAMPLE $XX,XXX"}]}; }
-// TODO(Sunrun): replace with real soft-credit flow run by the licensed provider. This page never collects SSN or credit data.
-async function creditCheckApi(consent){ return {mock:true,status:"demo_not_run"}; }
-// TODO(Sunrun): replace with real e-sign envelope (disclosures, CA Solar Energy System Disclosure Document, right-to-cancel). No real contract is generated here.
-async function esignApi(packet){ return {mock:true,status:"demo_not_sent"}; }
-// ------------------------------------------------------------------------
+async function designApi(input){
+  input=input||{};
+  if(stagingBase()){
+    try{var d=await stagingPost("/api/design",input);if(d&&d.ok!==false)return d;}
+    catch(e){console.warn("[closer staging] design",e);}
+  }
+  var k=input.kwh?Math.max(2,Math.round(input.kwh*12/1500*10)/10):null;
+  return {mock:true,system_kw:k,panels:k?Math.ceil(k/0.4):null,annual_kwh:input.kwh?input.kwh*12:null};
+}
+async function pricingApi(design){
+  if(stagingBase()){
+    try{var p=await stagingPost("/api/pricing",{design:design||{}});if(p&&p.ok!==false)return p;}
+    catch(e){console.warn("[closer staging] pricing",e);}
+  }
+  return {mock:true,options:[{k:"Lease",d:"Company owns the system; fixed monthly payment to use it.",p:"SAMPLE $XXX/mo"},{k:"PPA",d:"Company owns the system; you pay per kWh it produces.",p:"SAMPLE $0.XX/kWh"},{k:"Loan",d:"You own the system; repay a lender over time.",p:"SAMPLE $XXX/mo"},{k:"Cash",d:"You own the system; pay upfront.",p:"SAMPLE $XX,XXX"}]};
+}
+async function creditCheckApi(consent){
+  if(!stagingBase())return {mock:true,status:"demo_not_run"};
+  try{
+    return await stagingPost("/api/credit-check",{consent:consent,binh_approved:closerCfg().binhApprovedCredit===true,approver:closerCfg().binhApprovedCredit===true?"Binh":""});
+  }catch(e){console.warn("[closer staging] credit",e);return {mock:true,status:"demo_not_run",ran:false};}
+}
+async function esignApi(packet){
+  if(!stagingBase())return {mock:true,status:"demo_not_sent"};
+  try{
+    var slim=packet||{};
+    return await stagingPost("/api/esign",{binh_approved:closerCfg().binhApprovedEsign===true,approver:closerCfg().binhApprovedEsign===true?"Binh":"",selected_option:(slim.answers&&slim.answers.selected_option)||""});
+  }catch(e){console.warn("[closer staging] esign",e);return {mock:true,status:"demo_not_sent",sent:false};}
+}
+function readAsDataURL(file){return new Promise(function(ok,no){var r=new FileReader();r.onload=function(){ok(String(r.result))};r.onerror=no;r.readAsDataURL(file);});}
+async function parseUploadedBill(file){
+  if(!stagingBase()||!file)return null;
+  var url=await readAsDataURL(file);
+  return stagingPost("/api/parse-bill",{document:{filename:file.name,mime:file.type||"application/octet-stream",base64:String(url).split(",")[1]||""}});
+}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
 async function say(html){var m=document.createElement("div");m.className="msg bot";m.innerHTML='<span class="typing"><i></i><i></i><i></i></span>';chat.appendChild(m);scroll();
@@ -28,7 +85,7 @@ function scroll(){(chat.lastElementChild||chat).scrollIntoView({behavior:"smooth
 function choose(opts){return new Promise(function(res){dock.innerHTML="";var w=document.createElement("div");w.className="choices";opts.forEach(function(o){var b=document.createElement("button");b.type="button";b.textContent=o;b.onclick=function(){dock.innerHTML="";me(o);res(o)};w.appendChild(b)});dock.appendChild(w);scroll();});}
 function form(html,read){return new Promise(function(res){dock.innerHTML='<form class="inputs" novalidate>'+html+'<p class="err"></p><button class="btn full" type="submit">Send</button></form>';var f=dock.querySelector("form");var i=f.querySelector("input,select");if(i&&matchMedia("(min-width:861px)").matches)i.focus();
   f.onsubmit=function(e){e.preventDefault();var r=read(f);if(typeof r==="string"){f.querySelector(".err").textContent=r;return;}dock.innerHTML="";me(r.echo);res(r.val);};scroll();});}
-var UT={"SDG&E":{plan:"SDG&E's residential plans are mostly time-of-use (for example TOU-DR1 or EV-TOU-5)",peak:"4 PM to 9 PM"},"SCE":{plan:"Most SCE homes are on a time-of-use plan such as TOU-D-4-9PM, TOU-D-5-8PM or TOU-D-PRIME",peak:"4 PM to 9 PM (5 to 8 PM on TOU-D-5-8PM)"},"PG&E":{plan:"Most PG&E homes are on a time-of-use plan such as E-TOU-C, E-TOU-D or E-ELEC",peak:"often 4 PM to 9 PM (5 to 8 PM on E-TOU-D)"}};
+var UT={"SDG&E":{plan:"SDG&E's residential plans are mostly time-of-use (for example TOU-DR1 or EV-TOU-5)",peak:"4 PM to 9 PM"},"SCE":{plan:"Most SCE homes are on a time-of-use plan such as TOU-D-4-9PM, TOU-D-5-8PM or TOU-D-PRIME",peak:"4 PM to 9 PM (5 to 8 PM on TOU-D-5-8PM)"},"PG&E":{plan:"Most PG&E homes are on a time-of-use plan such as E-TOU-C, E-TOU-D or E-ELEC",peak:"often 4 PM to 9 PM (5 to 8 PM on E-TOU-D)"},"HECO":{plan:"Hawaiian Electric residential service is often Schedule R or a residential time-of-use rate",peak:"evening peak windows depend on the schedule"}};
 A.handoff_reasons=[];function flag(r){if(A.handoff_reasons.indexOf(r)<0)A.handoff_reasons.push(r);}
 var HAND="That's one Binh should handle personally. I'll pass him everything you've shared so you don't have to repeat yourself. Nothing is signed or approved until you've talked with him.";
 var flow={
@@ -36,11 +93,13 @@ var flow={
    await say('Before we start: anything you share here, including your bill and this chat, is used only to prepare your design session and is seen only by Binh. You can ask us to delete it anytime. Never send your SSN, bank or card details. <a href="../../privacy/" target="_blank" rel="noopener">Privacy Policy</a>. OK to continue?');
    var c=await choose(["OK, let's go","I'd rather talk to Binh directly"]);if(c[0]==="I"){flag("asked for a human");await say(HAND);return"time";}
    A.privacy_notice_accepted=new Date().toISOString();await say("What made you check this out today?");A.motivation=await choose(["My bill is too high","Rates keep going up","Outages / backup power","Thinking about an EV or more usage","Just curious"]);return"utility";},
- utility:async function(){await say("Which utility sends your electric bill?");var u=await choose(["SDG&E","SCE","PG&E","Another utility"]);if(u[0]==="A"){flag("non-CA-IOU utility");A.utility="Other";await say("Right now I can only read SDG&E, SCE and PG&E bills. "+HAND);return"time";}
+ utility:async function(){await say("Which utility sends your electric bill?");var choices=["SDG&E","SCE","PG&E"];if(closerCfg().enableHeco)choices.push("HECO");choices.push("Another utility");var u=await choose(choices);if(u[0]==="A"){flag("non-CA-IOU utility");A.utility="Other";await say(closerCfg().enableHeco?"Right now I can read SDG&E, SCE, PG&E and HECO bills. "+HAND:"Right now I can only read SDG&E, SCE and PG&E bills. "+HAND);return"time";}
    A.utility=u;await say("Would you like to upload your bill, or type in a few numbers? A photo or PDF of a recent bill works, and the 12-month usage chart helps even more.");var c=await choose(["Upload my bill (PDF or photo)","Enter it manually"]);return c[0]==="U"?"upload":"manual";},
  upload:async function(){var v=await form('<label class="l">Your latest '+esc(A.utility)+' bill (PDF, JPG or PNG, max 8 MB)</label><input type="file" name="bill" accept="application/pdf,image/*"><p class="fine">Used only for your design session; seen only by Binh.</p>',function(f){var x=f.bill.files[0];if(!x)return"Choose a file.";if(x.size>8*1048576)return"That file is over 8 MB.";return{val:x,echo:"Uploaded: "+x.name}});
-   A.bill_file_obj=v;A.bill_file_name=v.name;await say("Got it. Your bill is attached for Binh to check line by line. I can't read documents myself yet, so I'll ask for a few numbers from the first page. Anything you skip gets marked unverified for Binh.");return"manual";},
- manual:async function(){var v=await form('<div class="row2"><div class="field"><label class="l">This month\'s electric total ($)</label><input name="amt" type="number" inputmode="decimal" min="1" placeholder="e.g. 240"></div><div class="field"><label class="l">ZIP</label><input name="zip" type="text" inputmode="numeric" maxlength="5" value="'+esc(lead.zip||"")+'"></div></div><div class="field"><label class="l">kWh used this period <span class="fine">(if shown)</span></label><input name="kwh" type="number" inputmode="numeric" min="0"></div><details><summary class="fine">More from your bill (optional)</summary><div class="row2" style="margin-top:8px"><div class="field"><label class="l">Delivery ($)</label><input name="del" type="number" inputmode="decimal" min="0"></div><div class="field"><label class="l">Generation ($)</label><input name="gen" type="number" inputmode="decimal" min="0"></div></div><div class="field"><label class="l">Rate plan name</label><input name="plan" type="text" placeholder="e.g. TOU-DR1"></div><div class="field"><label class="l">Last 12 months of electric charges ($), if you have it</label><input name="yr" type="number" inputmode="decimal" min="0"></div></details>',
+   A.bill_file_obj=v;A.bill_file_name=v.name;
+   if(stagingBase()){try{var parsed=await parseUploadedBill(v);if(parsed&&parsed.bill){A.parsed_bill=parsed.bill;var who=parsed.bill.utility_provider&&parsed.bill.utility_provider!=="unknown"?parsed.bill.utility_provider:"your utility";await say("Staging read a preliminary extract for <b>"+esc(who)+"</b> (confidence "+Math.round((parsed.bill.confidence||0)*100)+"%). Not a final read. Binh still checks the bill line by line.");}}catch(err){await say("I couldn't read that file on the staging parser. We'll enter the numbers manually.");}}
+   await say(A.parsed_bill?"Got it. Your bill is attached for Binh to check line by line. The staging extract can prefill a few boxes; anything you skip stays unverified.":"Got it. Your bill is attached for Binh to check line by line. I can't read documents myself yet, so I'll ask for a few numbers from the first page. Anything you skip gets marked unverified for Binh.");return"manual";},
+ manual:async function(){var pb=A.parsed_bill||{};var preAmt=pb.current_bill_amount||pb.monthly_average_bill||"";var preKwh=pb.current_period_kwh||pb.monthly_average_kwh||"";var prePlan=pb.rate_schedule||"";var amtAttr=preAmt!==""?' value="'+esc(preAmt)+'"':"";var kwhAttr=preKwh!==""?' value="'+esc(preKwh)+'"':"";var planAttr=prePlan?' value="'+esc(prePlan)+'"':"";var v=await form('<div class="row2"><div class="field"><label class="l">This month\'s electric total ($)</label><input name="amt" type="number" inputmode="decimal" min="1" placeholder="e.g. 240"'+amtAttr+'></div><div class="field"><label class="l">ZIP</label><input name="zip" type="text" inputmode="numeric" maxlength="5" value="'+esc(lead.zip||"")+'"></div></div><div class="field"><label class="l">kWh used this period <span class="fine">(if shown)</span></label><input name="kwh" type="number" inputmode="numeric" min="0"'+kwhAttr+'></div><details><summary class="fine">More from your bill (optional)</summary><div class="row2" style="margin-top:8px"><div class="field"><label class="l">Delivery ($)</label><input name="del" type="number" inputmode="decimal" min="0"></div><div class="field"><label class="l">Generation ($)</label><input name="gen" type="number" inputmode="decimal" min="0"></div></div><div class="field"><label class="l">Rate plan name</label><input name="plan" type="text" placeholder="e.g. TOU-DR1"'+planAttr+'></div><div class="field"><label class="l">Last 12 months of electric charges ($), if you have it</label><input name="yr" type="number" inputmode="decimal" min="0"></div></details>',
    function(f){var a=parseFloat(f.amt.value);if(!(a>0))return"Enter your electric total.";if(!/^\d{5}$/.test(f.zip.value))return"Enter a 5-digit ZIP.";var o={amt:a,zip:f.zip.value,del:parseFloat(f.del.value)||0,gen:parseFloat(f.gen.value)||0,kwh:parseFloat(f.kwh.value)||0,plan:f.plan.value.trim(),yr:parseFloat(f.yr.value)||0};return{val:o,echo:"$"+a+" · "+A.utility+" · "+o.zip+(o.kwh?" · "+o.kwh+" kWh":"")+(o.plan?" · "+o.plan:"")+(o.del?" · delivery $"+o.del:"")+(o.gen?" · generation $"+o.gen:"")+(o.yr?" · 12-mo $"+o.yr:"")}});
    Object.assign(A,{monthly_bill:"$"+v.amt,zip:v.zip,delivery_charge:v.del||"unverified",generation_charge:v.gen||"unverified",kwh:v.kwh||"unverified",rate_plan:v.plan||"unverified",annual_electric_cost:v.yr?"$"+v.yr+" (homeowner-entered estimate)":"unverified"});A._b=v;return"analyze";},
  analyze:async function(){var b=A._b,u=UT[A.utility];AV.target=.6;await say('<span class="fine">Reading your numbers…</span>');
@@ -73,25 +132,28 @@ var flow={
    else if(o!=="Nothing, I'm ready")await say("That makes sense. I'll note it so Binh can address it directly with your numbers.");return"close";},
  close:async function(){var s='<b>Your mission summary</b><dl class="summary"><dt>Bill</dt><dd>'+esc(A.monthly_bill)+" · "+esc(A.utility)+" · "+esc(A.rate_plan)+'</dd><dt>ZIP</dt><dd>'+esc(A.zip)+'</dd><dt>Home</dt><dd>'+esc(A.homeowner)+", roof "+esc(A.roof_age)+", "+esc(A.shade)+'</dd><dt>Goal</dt><dd>'+esc(A.motivation)+'</dd><dt>Battery</dt><dd>'+esc(A.battery_interest)+"</dd></dl>";await say(s);
    await say("Want to see a preliminary design for your home?");var c=await choose(["Yes, show me","I'd rather talk to Binh"]);if(c[0]==="I"){flag("asked for a human");await say(HAND);return"time";}return"sysdesign";},
- sysdesign:async function(){var d=await designApi({kwh:A._b&&A._b.kwh,zip:A.zip,shade:A.shade});A.design=d;AV.target=.6;
+ sysdesign:async function(){var d=await designApi({kwh:A._b&&A._b.kwh,monthly_kwh:A.parsed_bill&&A.parsed_bill.monthly_kwh,annual_kwh:A.parsed_bill&&A.parsed_bill.annual_kwh,utility:A.utility,zip:A.zip,shade:A.shade,battery_interest:A.battery_interest});A.design=d;AV.target=.6;
    var n=d.panels||16,cells="";for(var i=0;i<n;i++)cells+='<rect x="'+(20+(i%8)*30)+'" y="'+(40+Math.floor(i/8)*46)+'" width="27" height="42" rx="2" fill="url(#pv)" stroke="#3FE0FF" stroke-width=".6"/>';
    var svg='<svg viewBox="0 0 280 '+(80+Math.ceil(n/8)*46)+'" style="width:100%;max-width:340px;display:block;margin:8px 0" role="img" aria-label="Mock panel layout"><defs><linearGradient id="pv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14315a"/><stop offset="1" stop-color="#0a1830"/></linearGradient></defs><polygon points="10,30 270,30 270,'+(50+Math.ceil(n/8)*46)+' 10,'+(50+Math.ceil(n/8)*46)+'" fill="#1b2235" stroke="#FFB347" stroke-dasharray="4 3"/>'+cells+'<text x="12" y="20" fill="#8EA3C2" font-size="10">MOCK LAYOUT · NOT A REAL DESIGN</text></svg>';
-   await say("<b>Preliminary estimate</b>"+svg+(d.system_kw?"About <b>"+d.system_kw+" kW</b> ("+d.panels+" panels), sized to roughly "+d.annual_kwh+" kWh a year based on the "+A._b.kwh+" kWh you entered.":"I don't have your kWh, so this layout is a placeholder only.")+"<br><span class='fine'>Preliminary estimate. Your real size depends on your roof, shade, 12-month usage and the final design.</span>");return"offer";},
- offer:async function(){var pr=await pricingApi(A.design);A.offer_shown="sample";var h="<b>Ways to pay</b> <span class='fine'>(listed in no particular order)</span><ul>";pr.options.forEach(function(o){h+="<li><b>"+o.k+":</b> "+o.d+" <span style='color:var(--c2)'>"+o.p+"</span></li>"});h+="</ul><span class='fine'>Sample placeholders, not real prices. Real pricing comes from the final proposal. Results vary; no savings are guaranteed. I don't give tax advice.</span>";await say(h);
+   await say("<b>Preliminary estimate</b>"+svg+(d.preliminary&&d.system_kw?"About <b>"+d.system_kw+" kW</b> ("+d.panels+" panels). Sizing uses about "+d.annual_kwh+" kWh a year. Indicative offset target: "+esc(String(d.estimated_offset_pct))+"%. Not savings, not a quote.":(d.system_kw?"About <b>"+d.system_kw+" kW</b> ("+d.panels+" panels), sized to roughly "+d.annual_kwh+" kWh a year based on the "+A._b.kwh+" kWh you entered.":"I don't have your kWh, so this layout is a placeholder only."))+"<br><span class='fine'>"+(d.disclaimer?esc(d.disclaimer):"Preliminary estimate. Your real size depends on your roof, shade, 12-month usage and the final design.")+"</span>");return"offer";},
+ offer:async function(){var pr=await pricingApi(A.design);A.offer_shown="sample";var h="<b>Ways to pay</b> <span class='fine'>(listed in no particular order)</span><ul>";pr.options.forEach(function(o){h+="<li><b>"+o.k+":</b> "+o.d+" <span style='color:var(--c2)'>"+o.p+"</span></li>"});h+="</ul><span class='fine'>Sample placeholders, not real prices. Real pricing comes from the final proposal. Results vary; no savings are guaranteed. I don't give tax advice.</span>";if(pr.preliminary&&pr.disclaimer)h+="<span class='fine'>"+esc(pr.disclaimer)+"</span>";await say(h);
    await say("Which would you like to move forward with?");A.selected_option=await choose(["Lease","PPA","Loan","Cash","Not sure yet"]);return"verify";},
  verify:async function(){await say("Let's verify your details.");var v=await form('<div class="row2"><div class="field"><label class="l">First name</label><input name="fn" type="text" value="'+esc(lead.first_name||"")+'"></div><div class="field"><label class="l">Last name</label><input name="ln" type="text"></div></div><div class="field"><label class="l">Home address</label><input name="ad" type="text" autocomplete="street-address"></div><div class="row2"><div class="field"><label class="l">Email</label><input name="em" type="email" value="'+esc(lead.email||"")+'"></div><div class="field"><label class="l">Mobile</label><input name="ph" type="tel" value="'+esc(lead.phone||"")+'"></div></div><label class="consent"><input type="checkbox" name="own"> I confirm I own this home.</label>',
    function(f){if(!f.fn.value.trim()||!f.ln.value.trim())return"Enter your full name.";if(f.ad.value.trim().length<6)return"Enter your home address.";if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.em.value))return"Enter a valid email.";if(f.ph.value.replace(/\D/g,"").length<10)return"Enter a 10-digit mobile.";if(!f.own.checked)return"Please confirm homeownership.";return{val:{fn:f.fn.value.trim(),ln:f.ln.value.trim(),ad:f.ad.value.trim(),em:f.em.value.trim(),ph:f.ph.value.trim()},echo:f.fn.value+" "+f.ln.value+" · "+f.ad.value}});
    Object.assign(lead,{first_name:v.fn,last_name:v.ln,email:v.em,phone:v.ph});A.address=v.ad;A.homeowner_confirmed="yes";return"credit";},
  credit:async function(){await say('<b>Credit check consent</b> <span class="aiflag">DEMO STEP</span><br>In the real process, some options need a soft credit check run by the provider. This preview <b>does not run a credit check</b> and never asks for your SSN or financial details.');
-   A.credit_consent_mock=await choose(["I understand (demo)","Skip"]);await creditCheckApi(A.credit_consent_mock);return"submit";},
- submit:async function(){await say("Saving your selections…");try{var p=Object.assign({},lead,A,{page_type:"ai_closer",page_slug:cfg.slug,ai_assistant:NAME,demo_preview:true,homeowner:"yes",design:A.design?JSON.stringify(A.design):"",handoff_reason:A.handoff_reasons.length?A.handoff_reasons.join("; "):"completed demo close",transcript:history.map(function(h){return(h.role==="user"?"Prospect: ":NAME+": ")+h.text}).join("\n").slice(0,20000)});delete p._b;delete p.bill_file_obj;delete p.handoff_reasons;
-   if(A.bill_file_obj)p.bill_file=await new Promise(function(ok,no){var r=new FileReader();r.onload=function(){ok({name:A.bill_file_obj.name,type:A.bill_file_obj.type,size:A.bill_file_obj.size,base64:String(r.result).split(",")[1]})};r.onerror=no;r.readAsDataURL(A.bill_file_obj)});await S.post(p);}catch(x){console.error(x);}return"esign";},
+   A.credit_consent_mock=await choose(["I understand (demo)","Skip"]);var cr=await creditCheckApi(A.credit_consent_mock);if(stagingBase())await say("<span class='fine'>Credit check status: "+esc((cr&&cr.status)||"not run")+". No credit inquiry was performed. A real check waits for Binh's approval.</span>");return"submit";},
+ submit:async function(){   await say("Saving your selections…");try{var p=Object.assign({},lead,A,{page_type:"ai_closer",page_slug:cfg.slug,ai_assistant:NAME,demo_preview:!stagingBase(),homeowner:"yes",design:A.design?JSON.stringify(A.design):"",handoff_reason:A.handoff_reasons.length?A.handoff_reasons.join("; "):"completed demo close",transcript:history.map(function(h){return(h.role==="user"?"Prospect: ":NAME+": ")+h.text}).join("\n").slice(0,20000)});delete p._b;delete p.bill_file_obj;delete p.handoff_reasons;
+   if(A.bill_file_obj)p.bill_file=await new Promise(function(ok,no){var r=new FileReader();r.onload=function(){ok({name:A.bill_file_obj.name,type:A.bill_file_obj.type,size:A.bill_file_obj.size,base64:String(r.result).split(",")[1]})};r.onerror=no;r.readAsDataURL(A.bill_file_obj)});
+   if(stagingBase())await stagingPost("/api/leads",p);else await S.post(p);}catch(x){console.error(x);}return"esign";},
  esign:async function(){await say("Ready for documents?");await choose(["Send my documents"]);var r=await esignApi({lead:lead,answers:A});
-   await say('<b>Documents sent for signature</b> <span class="aiflag">DEMO, NOTHING SENT</span><br>In the live version, you\'d receive your agreement plus the California disclosures (including the CA Solar Energy System Disclosure Document and your right to cancel) to review and e-sign. <b>No contract was created and nothing was sent in this preview.</b>');return"confirm";},
+   await say('<b>Documents sent for signature</b> <span class="aiflag">DEMO, NOTHING SENT</span><br>In the live version, you\'d receive your agreement plus the California disclosures (including the CA Solar Energy System Disclosure Document and your right to cancel) to review and e-sign. <b>No contract was created and nothing was sent in this preview.</b>');
+   if(stagingBase())await say("<span class='fine'>E-sign status: "+esc((r&&r.status)||"not sent")+". Nothing was sent. Documents stay with Binh until he approves a handoff.</span>");return"confirm";},
  confirm:async function(){await say("<b>What happens next</b><ol><li><b>Site survey:</b> a technician confirms roof, electrical and shade.</li><li><b>Final design &amp; permits:</b> the design is finalized and permits are filed with your city.</li><li><b>Install:</b> usually one to a few days on site.</li><li><b>Permission to Operate (PTO):</b> your utility approves the system and you switch it on.</li></ol><span class='fine'>Timelines vary by city and utility. Binh is your point of contact throughout.</span>");dock.innerHTML='<p class="fine" style="text-align:center">Preview/demo flow. Follow along: <a href="https://instagram.com/gosovereignenergy" rel="noopener">@gosovereignenergy</a></p>';window.dispatchEvent(new CustomEvent("closer:done"));return null;},
  time:async function(){await say("When works best for Binh to reach you?");A.preferred_time=await choose(["Weekday morning","Weekday afternoon","Weekday evening","Saturday"]);A.review_format=await (async function(){await say("Phone, video, or in person?");return choose(["Phone call","Video call","In person at my home"])})();A.address=A.address||A.zip;return"submit2";},
  submit2:async function(){await flow.submit();await say("Done. Binh has your details and will reach out to confirm your "+esc(A.preferred_time.toLowerCase())+" "+esc(A.review_format.toLowerCase())+". Nothing is signed or approved until you've talked with him.");dock.innerHTML="";return null;}
 };
-async function run(s){while(s){var r=await askLLM({state:s,answers:A,history:history,routing:true});s=await flow[(r&&r.next&&flow[r.next])?r.next:s]();}}
+async function run(s){while(s){var r=await askLLM({state:s,answers:A,history:history,routing:true});if(r&&r.say&&closerCfg().speakOnRoute&&s!=="analyze")await say(esc(r.say));var jump=r&&r.next&&closerCfg().allowLlmRouting&&flow[r.next];s=await flow[jump?r.next:s]();}}
+window.SE_CLOSER_STAGING={stagingBase:stagingBase,askLLM:askLLM,designApi:designApi,pricingApi:pricingApi,creditCheckApi:creditCheckApi,esignApi:esignApi,parseUploadedBill:parseUploadedBill};
 window.addEventListener("load",function(){AV.start(document.getElementById("av"),cfg.mode||"orb");run("greet");});
 })();

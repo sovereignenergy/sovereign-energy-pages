@@ -1,0 +1,10 @@
+{
+  "utility_provider": "SDG&E",
+  "monthly_kwh": [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500],
+  "account_number": "8600123400",
+  "meter_number": "M12345",
+  "service_address": "1 JSON ST, SAN DIEGO, CA 92126",
+  "rate_schedule": "EV-TOU-5",
+  "current_bill_amount": 200.5,
+  "monthly_bill_amounts": [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200]
+}

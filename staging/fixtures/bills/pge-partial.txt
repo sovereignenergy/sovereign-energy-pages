@@ -1,0 +1,14 @@
+PG&E
+Account No: 9998887777-1
+Meter #: 1099999999
+Rate Schedule: E-TOU-D
+
+Total Amount Due: $150.00
+
+Usage History (kWh)
+09/2024  400
+10/2024  410
+11/2024  420
+12/2024  430
+01/2025  440
+02/2025  450

@@ -1,0 +1,7 @@
+Maui Electric
+Account Number: 222233334444
+Meter Number: M445566
+Service Address: 8 CANE RD, KAHULUI, HI 96732
+Rate Schedule: R
+Amount Due: $140.00
+kWh Usage: 430

@@ -1,0 +1,6 @@
+Southern California Edison
+Meter Number: 35900001
+Service Address: 1 SHORT ST, LONG BEACH, CA 90802
+Rate: TOU-D-PRIME
+Amount Due $88.10
+Total kWh this period: 210

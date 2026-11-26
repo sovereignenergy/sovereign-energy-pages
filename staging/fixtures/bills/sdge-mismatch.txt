@@ -1,0 +1,20 @@
+SAN DIEGO GAS & ELECTRIC
+Account Number: 8600111222
+Meter Number: 100200300
+Service Address: 10 MISMATCH WAY, SAN DIEGO CA 92126
+Rate Schedule: TOU-DR1
+Total Amount Due: $200.00
+This period usage: 580 kWh
+Feb 2024  610
+Mar 2024  540
+Apr 2024  480
+May 2024  455
+Jun 2024  520
+Jul 2024  690
+Aug 2024  740
+Sep 2024  710
+Oct 2024  560
+Nov 2024  490
+Dec 2024  530
+Jan 2025  580
+Total kWh (12 months): 9999

@@ -1,0 +1,29 @@
+SAN DIEGO GAS & ELECTRIC
+Customer Service
+
+Account Number: 8600 2211 09
+Meter Number: 100234567
+Service Address: 1420 ANONYMOUS AVE APT 2, SAN DIEGO CA 92126
+Rate Schedule: TOU-DR1
+Billing Period: 01/13/2025 - 02/11/2025
+
+Total Amount Due: $248.16
+Electric Charges: $231.40
+
+This period usage: 580 kWh
+
+Energy Usage History (kWh)
+Feb 2024  610
+Mar 2024  540
+Apr 2024  480
+May 2024  455
+Jun 2024  520
+Jul 2024  690
+Aug 2024  740
+Sep 2024  710
+Oct 2024  560
+Nov 2024  490
+Dec 2024  530
+Jan 2025  580
+
+Total kWh (12 months): 6905
